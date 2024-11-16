@@ -1,0 +1,80 @@
+**/node_modules/*
+**/.env
+**/.env.*
+**/dist/*
+**/build/*
+.env
+.DS_Store
+**/.DS_Store
+
+
+
+**/node_modules
+**/.pnp
+**/.pnp.js
+
+# testing
+**/coverage
+
+# production
+**/build
+
+# misc
+**/.DS_Store
+**/.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+
+
+# Node Modules
+**/node_modules/*
+
+# Environment Files
+**/.env
+**/.env.*
+.env
+
+# Build and Dist Files
+**/dist/*
+**/build/*
+
+# Operating System
+.DS_Store
+**/.DS_Store
+Thumbs.db
+
+# IDE Configurations
+.vscode/
+.idea/
+*.iml
+
+# Logs
+**/logs/*
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary Files
+*.tmp
+*.swp
+
+# React Specific
+**/.next/
+**/.cache/
+**/coverage/
+
+# Express Specific
+**/debug.log
+**/tmp/
+
+# Testing Artifacts
+**/jest/
+**/cypress/screenshots/
+**/cypress/videos/
+
