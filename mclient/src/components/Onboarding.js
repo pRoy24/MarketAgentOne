@@ -22,7 +22,7 @@ export default function Onboarding() {
   const [budget, setBudget] = useState('');
 
   // API Server URL
-  const API_SERVER = 'https://your.api.server'; // Replace with your actual API server URL
+  const API_SERVER = process.env.REACT_APP_GATEWAY_SERVER; // Replace with your actual API server URL
 
   // Function to update user details on the server
   const updateUserDetails = async (payload) => {
