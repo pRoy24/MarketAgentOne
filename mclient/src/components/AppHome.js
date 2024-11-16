@@ -1,9 +1,10 @@
-import React, {useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TopNav from './common/TopNav';
 import BottomNav from './common/BottomNav';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { IDKitWidget } from '@worldcoin/idkit'
+import { getHeaders } from '../utils/WebUtils.js';
 
 
 const GATEWAY_SERVER = process.env.REACT_APP_GATEWAY_SERVER;
@@ -11,16 +12,39 @@ const GATEWAY_SERVER = process.env.REACT_APP_GATEWAY_SERVER;
 
 function AppHome() {
 
-  const [ showOnboardingFlow, setShowOnboardingFlow ] = useState(false);
+  const [showOnboardingFlow, setShowOnboardingFlow] = useState(false);
 
   const navigate = useNavigate();
 
 
   useEffect(() => {
-    navigate('/onboarding');
+    // navigate('/onboarding');
   }, [showOnboardingFlow]);
 
+  useEffect(() => {
+
+    if (localStorage.getItem('authToken')) {
+
+      const headers = getHeaders();
+
+      axios.get(`${GATEWAY_SERVER}/users/verify`, headers).then((res) => {
+        if (res.status === 200) {
+          const userData = res.data;
+          if (!userData.userOnboardingCompleted) {
+            navigate('/onboarding');
+          }
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+    }
+  }, []);
+
   const onLoginSuccess = async (data) => {
+
+    console.log("LOGIN SUCCESS");
+    console.log(data);
+
 
 
 
@@ -35,12 +59,13 @@ function AppHome() {
     if (loginRes.status === 200) {
 
       const userData = loginRes.data;
-      console.log(userData);
+
+      const authToken = userData.authToken;
 
 
-      localStorage.setItem('authToken', loginRes.data.token);
+      localStorage.setItem('authToken', authToken);
 
-      if (!userData.userOnboardingCompleted) {
+      if (userData && !userData.userOnboardingCompleted) {
         navigate('/onboarding');
       }
 
@@ -64,7 +89,9 @@ function AppHome() {
             onSuccess={onLoginSuccess}
             verification_level="device" // minimum verification level accepted, defaults to "orb"
           >
-            {({ open }) => <button onClick={open}>Verify with World ID</button>}
+            {({ open }) => <button onClick={open}
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+            >Login with World ID</button>}
           </IDKitWidget>
 
           {/* Add your main content here */}

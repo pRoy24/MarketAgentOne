@@ -4,6 +4,7 @@ import BottomNav from './common/BottomNav';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+
 // Import getHeaders function
 import { getHeaders } from '../utils/WebUtils';
 
@@ -34,7 +35,7 @@ export default function Onboarding() {
     try {
       const hasFile = payload.avatar || payload.productImages;
       let data = payload;
-      let headers = getHeaders(hasFile);
+      let headers = getHeaders();
 
       if (hasFile) {
         const formData = new FormData();
@@ -51,8 +52,10 @@ export default function Onboarding() {
         }
         data = formData;
         // Remove 'Content-Type' to allow axios to set it automatically
-        delete headers['Content-Type'];
+       // delete headers['Content-Type'];
       }
+
+
 
       const response = await axios.post(`${API_SERVER}/users/update`, data, { headers });
 
@@ -119,7 +122,7 @@ export default function Onboarding() {
           {/* Step 2: Add Wallet and Avatar */}
           {currentStep === 2 && (
             <div>
-              <h2 className="text-xl font-semibold mb-4">Add Wallet and Avatar</h2>
+              <h2 className="text-xl font-semibold mb-4">Add Wallet</h2>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Wallet Address</label>
@@ -130,14 +133,7 @@ export default function Onboarding() {
                     className="w-full px-3 py-2 border border-gray-600 rounded bg-gray-800 text-white"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Avatar</label>
-                  <input
-                    type="file"
-                    onChange={(e) => setAvatar(e.target.files[0])}
-                    className="w-full px-3 py-2 border border-gray-600 rounded bg-gray-800 text-white"
-                  />
-                </div>
+
                 <div className="flex justify-between">
                   <button
                     onClick={prevStep}

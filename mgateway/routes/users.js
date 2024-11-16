@@ -1,5 +1,6 @@
 import express from 'express';
 const router = express.Router();
+import { verifyUserAuth , getUserDataById} from '../models/UserModel.js';
 
 // Import any necessary functions or modules
 // Assuming loginOrRegisterUser is defined in '../controllers/userController.js'
@@ -10,24 +11,37 @@ router.get('/', function (req, res, next) {
   res.send('respond with a resource');
 });
 
-router.post('/login_or_register', async function (req, res, next) {
+router.post('/login_or_register', async function (req, res) {
+  console.log("BE HERE");
+
+
   const payload = req.body;
+
+  console.log(payload);
 
   try {
     const userLoginResponse = await loginOrRegisterUser(payload);
     res.send(userLoginResponse);
   } catch (error) {
-    next(error);
+    console.log(error);
+
+    res.status(500).send({ 'message': 'Error' });
   }
 });
 
-router.post('/verify', async function (req, res, next) {
-  const { action, signal } = req.body;
-  console.log('action:', action);
-  console.log('signal:', signal);
+router.get('/verify', async function (req, res) {
 
-  
-  res.send('respond with a resource');
+  const headers = req.headers;
+  const userId = await verifyUserAuth(headers);
+
+  if (!userId) {
+    res.status(401).send({ 'message': 'Unauthorized' });
+  }
+
+  const userData = await getUserDataById(userId);
+  res.send(userData);
+
+
 });
 
 router.post('/update', async function(req, res) {
@@ -35,7 +49,14 @@ router.post('/update', async function(req, res) {
   const payload = req.body;
   console.log('payload:', payload);
 
-  await updateUserData(payload);
+  const headers = req.headers;
+  const userId = await verifyUserAuth(headers);
+
+
+  if (!userId) {
+    res.status(401).send({'message': 'Unauthorized'});
+  }
+  await updateUserData(userId, payload);
 
   res.send({'message': 'success'});
 

@@ -2,6 +2,7 @@
 import jwt from 'jsonwebtoken';
 
 
+
 export function generateAuthToken(userId) {
   const SECRET_KEY = process.env.TOKEN_SECRET;
   const token = jwt.sign({ _id: userId },
@@ -11,8 +12,15 @@ export function generateAuthToken(userId) {
 }
 
 export function verifyAuthToken(authToken) {
+
+
   const SECRET_KEY = process.env.TOKEN_SECRET;
+
+  
   const decoded = jwt.verify(authToken, SECRET_KEY);
+
+
+
   return decoded;
 
 }
