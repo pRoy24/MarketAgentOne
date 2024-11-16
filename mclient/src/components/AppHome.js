@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useEffect, useState } from 'react';
 import TopNav from './common/TopNav';
 import BottomNav from './common/BottomNav';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 import { IDKitWidget } from '@worldcoin/idkit'
 
 
@@ -11,10 +11,43 @@ const GATEWAY_SERVER = process.env.REACT_APP_GATEWAY_SERVER;
 
 function AppHome() {
 
-  const onLoginSuccess = () => {
-    alert('Verification successful!')
-    axios.post(`${GATEWAY_SERVER}/`)  
+  const [ showOnboardingFlow, setShowOnboardingFlow ] = useState(false);
+
+  const navigate = useNavigate();
+
+
+  useEffect(() => {
+    navigate('/onboarding');
+  }, [showOnboardingFlow]);
+
+  const onLoginSuccess = async (data) => {
+
+
+
+    const userWorldIdentifier = data.nullifier_hash;
+
+    const payload = {
+      userWorldIdentifier: userWorldIdentifier
+    };
+
+    const loginRes = await axios.post(`${GATEWAY_SERVER}/users/login_or_register`, payload);
+
+    if (loginRes.status === 200) {
+
+      const userData = loginRes.data;
+      console.log(userData);
+
+
+      localStorage.setItem('authToken', loginRes.data.token);
+
+      if (!userData.userOnboardingCompleted) {
+        navigate('/onboarding');
+      }
+
+    }
   }
+
+
 
   return (
     <div className="flex flex-col h-screen">
