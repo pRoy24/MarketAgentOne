@@ -22,4 +22,4 @@ They then add our authenticated webhook endpoint to their checkout webhook which
 - Permissionless onboarding with inbuilt verfiability.
 
 
-## Applicatio submission for EthGlobal hackathon 24.
+## Application submission for EthGlobal hackathon 24.
