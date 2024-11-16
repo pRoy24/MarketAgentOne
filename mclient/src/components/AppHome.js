@@ -54,7 +54,7 @@ function AppHome() {
       <TopNav />
       <div className="flex-grow overflow-auto bg-white text-gray-800 mt-16 mb-16">
         <div className="p-4">
-          <h1 className="text-2xl font-bold mb-4">Welcome to MarketingOne Mini App</h1>
+          <h1 className="text-2xl font-bold mb-4">Welcome to MarketingOne Dashboard</h1>
 
 
           <IDKitWidget

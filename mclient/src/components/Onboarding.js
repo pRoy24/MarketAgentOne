@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import TopNav from './common/TopNav';
 import BottomNav from './common/BottomNav';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-// Import any necessary authentication utilities
-// import { useAuth } from '../auth';
+// Import getHeaders function
+import { getHeaders } from '../utils/WebUtils';
 
 export default function Onboarding() {
   const [currentStep, setCurrentStep] = useState(1);
   const [userType, setUserType] = useState(null); // 'agentCreator' or 'merchant'
 
+  // For both types
+  const [walletAddress, setWalletAddress] = useState('');
+  const [avatar, setAvatar] = useState(null);
+
   // For Agent Creator
   const [agentType, setAgentType] = useState(null); // 'dalle3Banner', 'samsarOne', 'customAgent'
-
   const [apiUrl, setApiUrl] = useState('');
   const [inputSchema, setInputSchema] = useState('');
   const [outputSchema, setOutputSchema] = useState('');
@@ -27,24 +32,31 @@ export default function Onboarding() {
   // Function to update user details on the server
   const updateUserDetails = async (payload) => {
     try {
-      const response = await fetch(`${API_SERVER}/users/update`, {
-        method: 'POST', // Use 'PUT' if your API expects it
-        headers: {
-          'Content-Type': 'application/json',
-          // Include any necessary authentication headers
-          // 'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      const hasFile = payload.avatar || payload.productImages;
+      let data = payload;
+      let headers = getHeaders(hasFile);
 
-      if (!response.ok) {
-        // Handle errors
-        console.error('Failed to update user details:', response.statusText);
-      } else {
-        // Optionally, handle the response data
-        const data = await response.json();
-        console.log('User details updated:', data);
+      if (hasFile) {
+        const formData = new FormData();
+        for (const key in payload) {
+          if (payload[key] instanceof File || payload[key] instanceof Blob) {
+            formData.append(key, payload[key]);
+          } else if (Array.isArray(payload[key])) {
+            payload[key].forEach((item, index) => {
+              formData.append(`${key}[${index}]`, item);
+            });
+          } else {
+            formData.append(key, payload[key]);
+          }
+        }
+        data = formData;
+        // Remove 'Content-Type' to allow axios to set it automatically
+        delete headers['Content-Type'];
       }
+
+      const response = await axios.post(`${API_SERVER}/users/update`, data, { headers });
+
+      console.log('User details updated:', response.data);
     } catch (error) {
       console.error('Error updating user details:', error);
     }
@@ -77,7 +89,7 @@ export default function Onboarding() {
           {currentStep === 1 && (
             <div>
               <h2 className="text-xl font-semibold mb-4">Are you an Agent Creator or a Merchant?</h2>
-              <div className="flex space-x-4">
+              <div className="w-full text-center space-x-4">
                 <button
                   onClick={async () => {
                     const selectedUserType = 'agentCreator';
@@ -104,10 +116,58 @@ export default function Onboarding() {
             </div>
           )}
 
+          {/* Step 2: Add Wallet and Avatar */}
+          {currentStep === 2 && (
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Add Wallet and Avatar</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Wallet Address</label>
+                  <input
+                    type="text"
+                    value={walletAddress}
+                    onChange={(e) => setWalletAddress(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-600 rounded bg-gray-800 text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Avatar</label>
+                  <input
+                    type="file"
+                    onChange={(e) => setAvatar(e.target.files[0])}
+                    className="w-full px-3 py-2 border border-gray-600 rounded bg-gray-800 text-white"
+                  />
+                </div>
+                <div className="flex justify-between">
+                  <button
+                    onClick={prevStep}
+                    className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={async () => {
+                      const payload = {
+                        userType,
+                        walletAddress,
+                        avatar,
+                      };
+                      await updateUserDetails(payload);
+                      nextStep();
+                    }}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Agent Creator Flow */}
           {userType === 'agentCreator' && (
             <>
-              {currentStep === 2 && (
+              {currentStep === 3 && (
                 <div>
                   <h2 className="text-xl font-semibold mb-4">Deploy your first agent</h2>
                   <div className="flex flex-col space-y-4">
@@ -153,7 +213,7 @@ export default function Onboarding() {
                 </div>
               )}
 
-              {currentStep === 3 && agentType === 'customAgent' && (
+              {currentStep === 4 && agentType === 'customAgent' && (
                 <div>
                   <h2 className="text-xl font-semibold mb-4">Configure your Custom Agent</h2>
                   <div className="space-y-4">
@@ -191,7 +251,6 @@ export default function Onboarding() {
                       </button>
                       <button
                         onClick={async () => {
-                          // Create payload with the latest state
                           const payload = {
                             userType,
                             agentType,
@@ -216,7 +275,7 @@ export default function Onboarding() {
           {/* Merchant Flow */}
           {userType === 'merchant' && (
             <>
-              {currentStep === 2 && (
+              {currentStep === 3 && (
                 <div>
                   <h2 className="text-xl font-semibold mb-4">Add Product Listing</h2>
                   <div className="space-y-4">
@@ -248,10 +307,9 @@ export default function Onboarding() {
                       </button>
                       <button
                         onClick={async () => {
-                          // Create payload with the latest state
                           const payload = {
                             userType,
-                            productImages, // You may need to handle file uploads separately
+                            productImages,
                             description,
                           };
                           await updateUserDetails(payload);
@@ -266,7 +324,7 @@ export default function Onboarding() {
                 </div>
               )}
 
-              {currentStep === 3 && (
+              {currentStep === 4 && (
                 <div>
                   <h2 className="text-xl font-semibold mb-4">Add Budget</h2>
                   <div className="space-y-4">
@@ -288,10 +346,9 @@ export default function Onboarding() {
                       </button>
                       <button
                         onClick={async () => {
-                          // Create payload with the latest state
                           const payload = {
                             userType,
-                            productImages, // Again, handle file uploads appropriately
+                            productImages,
                             description,
                             budget,
                           };
@@ -310,7 +367,7 @@ export default function Onboarding() {
           )}
 
           {/* Confirmation Message */}
-          {currentStep > 3 && (
+          {currentStep > 4 && (
             <div>
               <h2 className="text-xl font-semibold mb-4">Thank you!</h2>
               <p>Your information has been submitted successfully.</p>
