@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { IDKitWidget } from '@worldcoin/idkit'
 import { getHeaders } from '../utils/WebUtils.js';
 
+import {useUser} from '../contexts/UserContext.js';
 
 const GATEWAY_SERVER = process.env.REACT_APP_GATEWAY_SERVER;
 
@@ -17,9 +18,41 @@ function AppHome() {
   const navigate = useNavigate();
 
 
+  const { user, setUser } = useUser();
+
+  useEffect(() => {
+
+    if (user) {
+      console.log("USER");
+      console.log(user);
+      if (!user.userOnboardingCompleted) {
+        setShowOnboardingFlow(true);
+      } else {
+        if (user.userType === 'agentCreator') {
+          navigate("/agent_creator_home");
+        } else if (user.userType === 'merchant') {
+          navigate("/merchant_home");
+        }
+      }
+    }
+    
+  }, [user]);
+
   useEffect(() => {
     // navigate('/onboarding');
+
+    if (showOnboardingFlow) {
+     // navigate('/onboarding');
+    }
+
   }, [showOnboardingFlow]);
+
+
+  useEffect(() => {
+
+
+  }, []);
+
 
   useEffect(() => {
 
@@ -30,6 +63,8 @@ function AppHome() {
       axios.get(`${GATEWAY_SERVER}/users/verify`, headers).then((res) => {
         if (res.status === 200) {
           const userData = res.data;
+
+          setUser(userData);
           if (!userData.userOnboardingCompleted) {
             navigate('/onboarding');
           }

@@ -6,12 +6,16 @@ import reportWebVitals from './reportWebVitals';
 import { base } from 'viem/chains';
 import { OnchainKitProvider } from '@coinbase/onchainkit';
 import { Providers } from './providers';
+import { UserProvider } from './contexts/UserContext';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Providers>
+      <UserProvider>
       <App />
+      </UserProvider>
     </Providers>
   </React.StrictMode>
 );

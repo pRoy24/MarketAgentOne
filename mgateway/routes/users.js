@@ -12,13 +12,10 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/login_or_register', async function (req, res) {
-  console.log("BE HERE");
-
 
   const payload = req.body;
 
-  console.log(payload);
-
+ 
   try {
     const userLoginResponse = await loginOrRegisterUser(payload);
     res.send(userLoginResponse);
@@ -47,7 +44,6 @@ router.get('/verify', async function (req, res) {
 router.post('/update', async function(req, res) {
 
   const payload = req.body;
-  console.log('payload:', payload);
 
   const headers = req.headers;
   const userId = await verifyUserAuth(headers);
