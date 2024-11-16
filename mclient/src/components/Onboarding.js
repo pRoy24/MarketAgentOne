@@ -56,8 +56,7 @@ export default function Onboarding() {
       }
 
 
-
-      const response = await axios.post(`${API_SERVER}/users/update`, data, { headers });
+      const response = await axios.post(`${API_SERVER}/users/update`, data, headers);
 
       console.log('User details updated:', response.data);
     } catch (error) {

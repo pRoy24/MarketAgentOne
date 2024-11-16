@@ -3,8 +3,8 @@ import { getDBConnectionString } from './DBString.js';
 
 import { verifyAuthToken, generateAuthToken } from './Auth.js';
 
+import { ethers } from 'ethers';
 
-import * as ethers from 'ethers';
 
 
 
@@ -51,7 +51,7 @@ export async function updateUserData(userId, payload) {
 
   if (payload && payload.walletAddress) {
     const { walletAddress } = payload;
-    const normalizedWalletAddress = ethers.utils.getAddress(walletAddress);
+    const normalizedWalletAddress = ethers.getAddress(walletAddress);
     payload.walletAddress = normalizedWalletAddress;
   }
   const userUpdatedData = await User.findOneAndUpdate({ _id: userId }, payload);
@@ -63,8 +63,12 @@ export async function verifyUserAuth(requestHeaders) {
 
   await getDBConnectionString();
 
-  const userToken = requestHeaders.authorization.split("Bearer ")[1];
-
+  let userToken;
+  try {
+    userToken = requestHeaders.authorization.split("Bearer ")[1];
+  } catch (e) {
+    return null;
+  }
   if (!userToken) {
     return null;
   }
