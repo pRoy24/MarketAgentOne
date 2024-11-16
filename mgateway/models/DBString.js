@@ -10,9 +10,9 @@ export async function getDBConnectionString() {
   if (db) {
     return db;
   }
-  let connectionString = `mongodb://localhost:27017/SamsarGG`;
+  let connectionString = `mongodb://localhost:27017/MarketAgent`;
   if (process.env.CURRENT_ENV === 'production') {
-    connectionString = 'mongodb://localhost:27017/SamsarOne';
+    connectionString = 'mongodb://localhost:27017/Marketgent';
   }
   mongoose.connect(`${connectionString}`, { useNewUrlParser: true, useUnifiedTopology: true });
 
