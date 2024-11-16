@@ -1,12 +1,15 @@
+// src/components/Onboarding.js
+
 import React, { useState } from 'react';
 import TopNav from './common/TopNav';
 import BottomNav from './common/BottomNav';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import WalletPreview from './onboard_wizard/WalletPreview';
-
-// Import getHeaders function
 import { getHeaders } from '../utils/WebUtils';
+
+// Import the new AddStore component
+import AddStore from './onboard_wizard/AddStore';
 
 export default function Onboarding() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -23,8 +26,7 @@ export default function Onboarding() {
   const [outputSchema, setOutputSchema] = useState('');
 
   // For Merchant
-  const [productImages, setProductImages] = useState([]);
-  const [description, setDescription] = useState('');
+  const [merchantStoreLink, setMerchantStoreLink] = useState('');
   const [budget, setBudget] = useState('');
 
   // API Server URL
@@ -33,7 +35,7 @@ export default function Onboarding() {
   // Function to update user details on the server
   const updateUserDetails = async (payload) => {
     try {
-      const hasFile = payload.avatar || payload.productImages;
+      const hasFile = payload.avatar;
       let data = payload;
       let headers = getHeaders();
 
@@ -42,19 +44,12 @@ export default function Onboarding() {
         for (const key in payload) {
           if (payload[key] instanceof File || payload[key] instanceof Blob) {
             formData.append(key, payload[key]);
-          } else if (Array.isArray(payload[key])) {
-            payload[key].forEach((item, index) => {
-              formData.append(`${key}[${index}]`, item);
-            });
           } else {
             formData.append(key, payload[key]);
           }
         }
         data = formData;
-        // Remove 'Content-Type' to allow axios to set it automatically
-       // delete headers['Content-Type'];
       }
-
 
       const response = await axios.post(`${API_SERVER}/users/update`, data, headers);
 
@@ -118,7 +113,7 @@ export default function Onboarding() {
             </div>
           )}
 
-          {/* Step 2: Add Wallet and Avatar */}
+          {/* Step 2: Add Wallet */}
           {currentStep === 2 && (
             <div>
               <h2 className="text-xl font-semibold mb-4">Add Wallet</h2>
@@ -159,14 +154,9 @@ export default function Onboarding() {
                     Next
                   </button>
                 </div>
-    
- 
-        
-
               </div>
             </div>
           )}
-
 
           {/* Agent Creator Flow */}
           {userType === 'agentCreator' && (
@@ -280,52 +270,11 @@ export default function Onboarding() {
           {userType === 'merchant' && (
             <>
               {currentStep === 3 && (
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">Add Product Listing</h2>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Product Images</label>
-                      <input
-                        type="file"
-                        multiple
-                        onChange={(e) => {
-                          setProductImages([...e.target.files]);
-                        }}
-                        className="w-full px-3 py-2 border border-gray-600 rounded bg-gray-800 text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Description</label>
-                      <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-600 rounded bg-gray-800 text-white"
-                      />
-                    </div>
-                    <div className="flex justify-between">
-                      <button
-                        onClick={prevStep}
-                        className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-                      >
-                        Previous
-                      </button>
-                      <button
-                        onClick={async () => {
-                          const payload = {
-                            userType,
-                            productImages,
-                            description,
-                          };
-                          await updateUserDetails(payload);
-                          nextStep();
-                        }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                      >
-                        Next
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <AddStore
+                  nextStep={nextStep}
+                  prevStep={prevStep}
+                  setMerchantStoreLink={setMerchantStoreLink}
+                />
               )}
 
               {currentStep === 4 && (
@@ -352,8 +301,7 @@ export default function Onboarding() {
                         onClick={async () => {
                           const payload = {
                             userType,
-                            productImages,
-                            description,
+                            merchantStoreLink,
                             budget,
                           };
                           await updateUserDetails(payload);
