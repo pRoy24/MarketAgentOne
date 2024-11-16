@@ -3,7 +3,7 @@ import TopNav from './common/TopNav';
 import BottomNav from './common/BottomNav';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import WalletPreview from './onboard_wizard/WalletPreview';
 
 // Import getHeaders function
 import { getHeaders } from '../utils/WebUtils';
@@ -133,6 +133,10 @@ export default function Onboarding() {
                   />
                 </div>
 
+                {walletAddress && userType === 'merchant' && (
+                  <WalletPreview address={walletAddress} />
+                )}
+
                 <div className="flex justify-between">
                   <button
                     onClick={prevStep}
@@ -155,9 +159,14 @@ export default function Onboarding() {
                     Next
                   </button>
                 </div>
+    
+ 
+        
+
               </div>
             </div>
           )}
+
 
           {/* Agent Creator Flow */}
           {userType === 'agentCreator' && (

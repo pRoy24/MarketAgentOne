@@ -3,11 +3,16 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { base } from 'viem/chains';
+import { OnchainKitProvider } from '@coinbase/onchainkit';
+import { Providers } from './providers';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <Providers>
+      <App />
+    </Providers>
   </React.StrictMode>
 );
 
