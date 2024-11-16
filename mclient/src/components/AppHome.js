@@ -1,9 +1,12 @@
 import React from 'react';
 import TopNav from './common/TopNav';
 import BottomNav from './common/BottomNav';
+import axios from 'axios';
 
 import { IDKitWidget } from '@worldcoin/idkit'
 
+
+const GATEWAY_SERVER = process.env.REACT_APP_GATEWAY_SERVER;
 
 
 function AppHome() {
