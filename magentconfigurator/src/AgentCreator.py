@@ -73,7 +73,7 @@ def initialize_agent():
 
     # Store buffered conversation history in memory.
     memory = MemorySaver()
-    config = {"configurable": {"thread_id": "CDP Agentkit Chatbot Example!"}}
+    config = {"configurable": {"thread_id": "CDP Agentkit Add Marketing agent endpoints example!"}}
 
     # Create ReAct Agent using the LLM and CDP Agentkit tools.
     return create_react_agent(
