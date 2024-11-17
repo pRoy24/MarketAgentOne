@@ -3,39 +3,7 @@ import { Avatar, Identity, Name, Badge, Address } from '@coinbase/onchainkit/ide
 import { base } from 'viem/chains';
 import TopNav from '../common/TopNav';
 
-// Dummy data for campaigns
-const dummyActiveCampaigns = [
-  {
-    id: 1, // Assuming 'id' is used for navigation and uniqueness
-    userId: 'user_123456',
-    walletAddress: '0x1234567890abcdef1234567890abcdef12345678',
-    campaignName: 'Spring Sale Campaign',
-    campaignDescription: 'A campaign promoting our spring sale products.',
-    campaignStartDate: new Date('2023-03-01'),
-    campaignEndDate: new Date('2023-03-31'),
-    campaignStatus: 'active',
-    campaignBudget: 1000,
-    campaignImages: [
-      'https://samsar-resources.s3.us-west-2.amazonaws.com/demo/canvas_image.png',
-    ],
-    image: 'https://samsar-resources.s3.us-west-2.amazonaws.com/demo/canvas_image.png',
-    submissions: [
-      {
-        agentId: 'agent_1',
-        agentWalletAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
-        mediaLink: 'https://example.com/media1',
-        productLink: 'https://example.com/product1?referrer=agent_1',
-      },
-      {
-        agentId: 'agent_2',
-        agentWalletAddress: '0x1234567890abcdef1234567890abcdef12345678',
-        mediaLink: 'https://example.com/media2',
-        productLink: 'https://example.com/product1?referrer=agent_2',
-      },
-    ],
-  },
-  // Add more campaigns as needed
-];
+import { dummyActiveCampaigns } from '../../constants/DummyValues';
 
 export default function CampaignHome() {
   // For demonstration, we'll use the first campaign in the array
@@ -106,7 +74,7 @@ export default function CampaignHome() {
               {campaign.submissions.map((submission, index) => (
                 <div key={index} className="bg-gray-700 p-4 rounded">
                   {/* Agent's Wallet Address and Avatar */}
-                  <div className="flex items-center mb-2">
+                  <div className="flex items-center mb-4">
                     <Identity
                       address={submission.agentWalletAddress}
                       chain={base}
@@ -120,13 +88,36 @@ export default function CampaignHome() {
                       </div>
                     </Identity>
                   </div>
+                  {/* Submission Media */}
+                  <div className="mb-4">
+                    {submission.mediaLink.endsWith('.mp4') ? (
+                      <video
+                        controls
+                        src={submission.mediaLink}
+                        className="w-full h-64 object-cover rounded"
+                      >
+                        Your browser does not support the video tag.
+                      </video>
+                    ) : submission.mediaLink.endsWith('.png') ||
+                      submission.mediaLink.endsWith('.jpg') ||
+                      submission.mediaLink.endsWith('.jpeg') ||
+                      submission.mediaLink.endsWith('.gif') ? (
+                      <img
+                        src={submission.mediaLink}
+                        alt="Submission Media"
+                        className="w-full h-64 object-cover rounded"
+                      />
+                    ) : (
+                      <p className="text-gray-400">Media format not supported.</p>
+                    )}
+                  </div>
                   {/* Submission Links */}
                   <div className="space-y-2">
                     <p>
                       <span className="font-semibold">Media Link:</span>{' '}
                       <a
                         href={submission.mediaLink}
-                        className="text-blue-400 underline"
+                        className="text-blue-400 underline break-all"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -137,7 +128,7 @@ export default function CampaignHome() {
                       <span className="font-semibold">Product Link:</span>{' '}
                       <a
                         href={submission.productLink}
-                        className="text-blue-400 underline"
+                        className="text-blue-400 underline break-all"
                         target="_blank"
                         rel="noopener noreferrer"
                       >

@@ -68,7 +68,7 @@ const IMAGE_BASE = 'https://im-embeddings.s3.us-west-2.amazonaws.com/demo';
       submissions: [
         {
           agentId: 'agent_1',
-          mediaLink: 'https://example.com/media1',
+          mediaLink: 'https://im-embeddings.s3.us-west-2.amazonaws.com/demo/video-67391eb6da4459d9e21d62bd_dycu+(1).mp4',
           productLink: 'https://example.com/product1',
         },
         {
@@ -93,7 +93,7 @@ const IMAGE_BASE = 'https://im-embeddings.s3.us-west-2.amazonaws.com/demo';
       submissions: [
         {
           agentId: 'agent_3',
-          mediaLink: 'https://example.com/media3',
+          mediaLink: 'https://im-embeddings.s3.us-west-2.amazonaws.com/demo/video-67392e9ba7824d61d5b3ac11_bxln.mp4',
           productLink: 'https://example.com/product3',
         },
       ],
@@ -110,7 +110,13 @@ const IMAGE_BASE = 'https://im-embeddings.s3.us-west-2.amazonaws.com/demo';
       campaignBudget: 1500,
       campaignImages: [`${IMAGE_BASE}/canvas_image (4).png`],
       image: `${IMAGE_BASE}/canvas_image (4).png`,
-      submissions: [],
+      submissions: [
+        {
+          agentId: 'agent_3',
+          mediaLink: 'https://im-embeddings.s3.us-west-2.amazonaws.com/demo/video-67392997a7824d61d5b3ab2d_z0wq.mp4',
+          productLink: 'https://example.com/product3',
+        },
+      ],
     },
     // Add more campaigns as needed
   ];
