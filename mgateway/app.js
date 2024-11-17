@@ -6,6 +6,8 @@ import logger from 'morgan';
 
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/users.js';
+import campaignsRouter from './routes/campaigns.js';
+import agentsRouter from './routes/agents.js';
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -38,6 +40,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/campaigns', campaignsRouter);
+app.use('/agents', agentsRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import TopNav from './common/TopNav';
-import BottomNav from './common/BottomNav';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { IDKitWidget } from '@worldcoin/idkit';
 import { getHeaders } from '../utils/WebUtils.js';
+import { Avatar, Identity, Name, Badge, Address } from '@coinbase/onchainkit/identity';
+import { dummyActiveAgents, dummyActiveCampaigns } from '../constants/DummyValues.js';
+
+import { base } from 'viem/chains';
 
 import { useUser } from '../contexts/UserContext.js';
 
@@ -26,8 +29,7 @@ function AppHome() {
   useEffect(() => {
 
     if (user) {
-      console.log("USER");
-      console.log(user);
+
       if (!user.userOnboardingCompleted) {
         setShowOnboardingFlow(true);
       } else {
@@ -94,42 +96,67 @@ function AppHome() {
     }
   };
 
-  // Define dummy data for active agents and campaigns
-  const dummyActiveAgents = [
-    { id: 1, name: 'Agent A', image: 'https://via.placeholder.com/150' },
-    { id: 2, name: 'Agent B', image: 'https://via.placeholder.com/150' },
-    { id: 3, name: 'Agent C', image: 'https://via.placeholder.com/150' },
-    { id: 4, name: 'Agent D', image: 'https://via.placeholder.com/150' },
-    { id: 5, name: 'Agent E', image: 'https://via.placeholder.com/150' },
-  ];
-
-  const dummyActiveCampaigns = [
-    { id: 1, title: 'Campaign 1', image: 'https://via.placeholder.com/150' },
-    { id: 2, title: 'Campaign 2', image: 'https://via.placeholder.com/150' },
-    { id: 3, title: 'Campaign 3', image: 'https://via.placeholder.com/150' },
-    { id: 4, title: 'Campaign 4', image: 'https://via.placeholder.com/150' },
-    { id: 5, title: 'Campaign 5', image: 'https://via.placeholder.com/150' },
-  ];
 
   // Slider settings
   const settings = {
     dots: true,
-    infinite: true,
+    infinite: false,
     speed: 500,
-    slidesToShow: 5,
+    slidesToShow: 3,
     slidesToScroll: 1,
     autoplay: false,
   };
 
+
+  const agentSliderSettings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    autoplay: false,
+  };
+
+
   // Create the displays using the Slider component
   const activeAgentsListDisplay = (
-    <Slider {...settings}>
-      {dummyActiveAgents.map(agent => (
+    <Slider {...agentSliderSettings}>
+      {dummyActiveAgents.map((agent) => (
         <div key={agent.id} className="px-2">
-          <div className="bg-white rounded-lg shadow-md dark:bg-gray-800">
-            <img src={agent.image} alt={agent.name} className="w-full h-40 object-cover rounded-t-lg" />
+          <div
+            onClick={() => navigate(`/agent/${agent.id}`)}
+            className="cursor-pointer bg-white rounded-lg shadow-md dark:bg-gray-800"
+          >
+
+
+            {/* Agent Details */}
             <div className="p-4">
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{agent.name}</h3>
+              {/* Agent's Wallet Address and Name using OnChainKit */}
+              <div className="flex items-center mb-4 text-white">
+                <Identity address={agent.walletAddress} chain={base}>
+                  <div>
+
+                    <Address className="text-gray-500 dark:text-gray-400"/>
+                  </div>
+                </Identity>
+              </div>
+
+              <div>
+                {agent.name}
+              </div>
+              <div>
+               Generation Type: {agent.modality}
+              </div>
+              <div>
+                {agent.status}
+
+              </div>
+              <div> 
+
+               Tasks Completed: {agent.tasksCompleted}
+
+               </div>   
+              {/* Similarly for statusApiBody and completionApiBody */}
             </div>
           </div>
         </div>
@@ -137,11 +164,15 @@ function AppHome() {
     </Slider>
   );
 
+
   const activeCampaignsListDisplay = (
     <Slider {...settings}>
       {dummyActiveCampaigns.map(campaign => (
         <div key={campaign.id} className="px-2">
-          <div className="bg-white rounded-lg shadow-md dark:bg-gray-800">
+          <div
+            onClick={() => navigate(`/campaign/${campaign.id}`)}
+            className="cursor-pointer bg-white rounded-lg shadow-md dark:bg-gray-800"
+          >
             <img src={campaign.image} alt={campaign.title} className="w-full h-40 object-cover rounded-t-lg" />
             <div className="p-4">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{campaign.title}</h3>
@@ -152,11 +183,13 @@ function AppHome() {
     </Slider>
   );
 
+
+
   const landingPageContent = (
     <div className="space-y-8">
       <div>
         <div className='text-2xl font-bold text-gray-800 dark:text-white mb-4'>
-          5 Active Campaigns
+          3 Active Campaigns
         </div>
         <div className="w-full">
           {activeCampaignsListDisplay}
@@ -164,7 +197,7 @@ function AppHome() {
       </div>
       <div>
         <div className='text-2xl font-bold text-gray-800 dark:text-white mb-4'>
-          5 Active Agents
+          2 Active Agents
         </div>
         <div>
           {activeAgentsListDisplay}
@@ -174,7 +207,7 @@ function AppHome() {
   );
 
   return (
-    <div className="flex flex-col h-auto bg-gray-100 dark:bg-gray-800">
+    <div className="flex flex-col h-auto bg-gray-100 dark:bg-gray-800 min-h-[100vh]">
       <TopNav />
       <div className="flex-grow overflow-auto bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white mt-16 mb-16">
         <div className="p-4">
@@ -190,7 +223,8 @@ function AppHome() {
               verification_level="device" // minimum verification level accepted, defaults to "orb"
             >
               {({ open }) => <button onClick={open}
-                className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+                className='bg-neutral-800 hover:bg-neutral-700 text-white font-bold py-4 px-4 rounded border
+                 border-neutral-500 rounded mt-2'
               >Login with World ID</button>}
             </IDKitWidget>
           </div>

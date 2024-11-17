@@ -6,8 +6,17 @@ const agentSchema = new Schema({
 
   userId: String,
   agentSchema: Object,
-  agentApiUrl: String,
+  requestApiUrl: String,
+  statusApiUrl: String,
+  completionApiUrl: String,
+  apiKey: String,
+  requestApiBody: String,
+  statusApiBody: String,
+  completionApiBody: String,
+  
   walletAddress: String,
+
+
   
 
 }, { timestamps: true, strict: false });

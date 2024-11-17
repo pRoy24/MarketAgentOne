@@ -44,10 +44,8 @@ router.get('/verify', async function (req, res) {
 router.post('/update', async function(req, res) {
 
   const payload = req.body;
-
   const headers = req.headers;
   const userId = await verifyUserAuth(headers);
-
 
   if (!userId) {
     res.status(401).send({'message': 'Unauthorized'});
@@ -55,8 +53,6 @@ router.post('/update', async function(req, res) {
   await updateUserData(userId, payload);
 
   res.send({'message': 'success'});
-
-
 });
 
 

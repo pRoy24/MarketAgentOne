@@ -95,9 +95,16 @@ export async function verifyUserAuth(requestHeaders) {
 export async function getUserDataById(userId) {
   await getDBConnectionString();
 
+  console.log(userId);
+  
 
 
   let userData = await User.findById(userId);
 
+  if (userData) {
   return userData._doc;
+  } else {
+    return null;
+  }
+
 }

@@ -79,452 +79,105 @@ export default function Onboarding() {
   };
 
   return (
+
     <div className="flex flex-col h-screen bg-gray-900 text-gray-100">
-      <TopNav />
-      <div className="flex-grow overflow-auto bg-gray-900 text-gray-100 mt-16 mb-16">
-        <div className="p-4 max-w-3xl mx-auto">
-          <h1 className="text-2xl font-bold mb-4">Welcome to MarketingAgentOne</h1>
+    <TopNav />
+    <div className="flex-grow overflow-auto bg-gray-900 text-gray-100 mt-16 mb-16">
+      <div className="p-4 max-w-3xl mx-auto">
+        <h1 className="text-2xl font-bold mb-4">Welcome to MarketingAgentOne</h1>
 
-          {currentStep === 1 && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Are you an Agent Creator or a Merchant?</h2>
-              <div className="w-full text-center space-x-4">
-                <button
-                  onClick={async () => {
-                    const selectedUserType = 'agentCreator';
-                    setUserType(selectedUserType);
-                    await updateUserDetails({ userType: selectedUserType });
-                    nextStep();
-                  }}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  Agent Creator
-                </button>
-                <button
-                  onClick={async () => {
-                    const selectedUserType = 'merchant';
-                    setUserType(selectedUserType);
-                    await updateUserDetails({ userType: selectedUserType });
-                    nextStep();
-                  }}
-                  className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  Merchant
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Step 2: Add Wallet */}
-          {currentStep === 2 && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Add Wallet</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Wallet Address</label>
-                  <input
-                    type="text"
-                    value={walletAddress}
-                    onChange={(e) => setWalletAddress(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-600 rounded bg-gray-800 text-white"
-                  />
-                </div>
-
-                {walletAddress && userType === 'merchant' && (
-                  <WalletPreview address={walletAddress} />
-                )}
-
-                <div className="flex justify-between">
-                  <button
-                    onClick={prevStep}
-                    className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    onClick={async () => {
-                      const payload = {
-                        userType,
-                        walletAddress,
-                        avatar,
-                      };
-                      await updateUserDetails(payload);
-                      nextStep();
-                    }}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {userType === 'merchant' && (
-  <>
-    {currentStep === 3 && (
-      <AddStore
-        nextStep={nextStep}
-        prevStep={prevStep}
-        setMerchantStoreLink={setMerchantStoreLink}
-      />
-    )}
-
-    {currentStep === 4 && (
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Add Budget</h2>
-        <div className="space-y-4">
-          {/* Budget Input */}
+        {/* Step 1: User Type Selection */}
+        {currentStep === 1 && (
           <div>
-            <label className="block text-sm font-medium mb-1">Budget</label>
-            <input
-              type="number"
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-600 rounded bg-gray-800 text-white"
-            />
+            <h2 className="text-xl font-semibold mb-4">Are you an Agent Creator or a Merchant?</h2>
+            {/* User type selection buttons */}
           </div>
-          {/* Navigation Buttons */}
-          <div className="flex justify-between">
-            <button
-              onClick={prevStep}
-              className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-            >
-              Previous
-            </button>
-            <button
-              onClick={async () => {
-                const payload = {
-                  userType,
-                  merchantStoreLink,
-                  budget,
-                  userOnboardingCompleted: true, // Set onboarding completed
-                };
-                await updateUserDetails(payload);
-                handleSubmit();
-              }}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Submit
-            </button>
-          </div>
-        </div>
-      </div>
-    )}
-  </>
-)}
+        )}
 
-          {/* Agent Creator Flow */}
-          {userType === 'agentCreator' && (
-            <>
-              {currentStep === 3 && (
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">Deploy your first agent</h2>
-                  <div className="flex flex-col space-y-4">
+        {/* Step 2: Add Wallet */}
+        {currentStep === 2 && (
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Add Wallet</h2>
+            {/* Wallet input and preview */}
+          </div>
+        )}
+
+        {/* Agent Creator Flow */}
+        {userType === 'agentCreator' && (
+          <>
+            {currentStep === 3 && (
+              <div>
+                <h2 className="text-xl font-semibold mb-4">Deploy your first agent</h2>
+                {/* Agent selection buttons */}
+              </div>
+            )}
+            {currentStep === 4 && agentType === 'customAgent' && (
+              <div>
+                <h2 className="text-xl font-semibold mb-4">Configure your Custom Agent</h2>
+                {/* Custom agent configuration inputs */}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Merchant Flow */}
+        {userType === 'merchant' && (
+          <>
+            {currentStep === 3 && (
+              <AddStore
+                nextStep={nextStep}
+                prevStep={prevStep}
+                setMerchantStoreLink={setMerchantStoreLink}
+              />
+            )}
+
+            {currentStep === 4 && (
+              <div>
+                <h2 className="text-xl font-semibold mb-4">Add Budget</h2>
+                <div className="space-y-4">
+                  {/* Budget Input */}
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Budget</label>
+                    <input
+                      type="number"
+                      value={budget}
+                      onChange={(e) => setBudget(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-600 rounded bg-gray-800 text-white"
+                    />
+                  </div>
+                  {/* Navigation Buttons */}
+                  <div className="flex justify-between">
                     <button
-                      onClick={async () => {
-                        const selectedAgentType = 'dalle3Banner';
-                        setAgentType(selectedAgentType);
-                        await updateUserDetails({
-                          userType,
-                          agentType: selectedAgentType,
-                        });
-                        handleSubmit();
-                      }}
+                      onClick={prevStep}
                       className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
                     >
-                      Dalle3Banner agent
+                      Previous
                     </button>
                     <button
                       onClick={async () => {
-                        const selectedAgentType = 'samsarOne';
-                        setAgentType(selectedAgentType);
-                        await updateUserDetails({
+                        const payload = {
                           userType,
-                          agentType: selectedAgentType,
-                        });
+                          merchantStoreLink,
+                          budget,
+                          userOnboardingCompleted: true, // Set onboarding completed
+                        };
+                        await updateUserDetails(payload);
                         handleSubmit();
                       }}
-                      className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     >
-                      SamsarOne agent
-                    </button>
-                    <button
-                      onClick={() => {
-                        const selectedAgentType = 'customAgent';
-                        setAgentType(selectedAgentType);
-                        nextStep();
-                      }}
-                      className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-                    >
-                      Custom agent
+                      Submit
                     </button>
                   </div>
                 </div>
-              )}
-
-              {currentStep === 4 && agentType === 'customAgent' && (
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">Configure your Custom Agent</h2>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">API URL</label>
-                      <input
-                        type="text"
-                        value={apiUrl}
-                        onChange={(e) => setApiUrl(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-600 rounded bg-gray-800 text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Input Schema</label>
-                      <textarea
-                        value={inputSchema}
-                        onChange={(e) => setInputSchema(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-600 rounded bg-gray-800 text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Output Schema</label>
-                      <textarea
-                        value={outputSchema}
-                        onChange={(e) => setOutputSchema(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-600 rounded bg-gray-800 text-white"
-                      />
-                    </div>
-                    <div className="flex justify-between">
-                      <button
-                        onClick={prevStep}
-                        className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-                      >
-                        Previous
-                      </button>
-                      <button
-                        onClick={async () => {
-                          const payload = {
-                            userType,
-                            agentType,
-                            apiUrl,
-                            inputSchema,
-                            outputSchema,
-                          };
-                          await updateUserDetails(payload);
-                          handleSubmit();
-                        }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                      >
-                        Submit
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Merchant Flow */}
-          {userType === 'merchant' && (
-            <>
-              {currentStep === 3 && (
-                <AddStore
-                  nextStep={nextStep}
-                  prevStep={prevStep}
-                  setMerchantStoreLink={setMerchantStoreLink}
-                />
-              )}
-
-              {currentStep === 4 && (
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">Add Budget</h2>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Budget</label>
-                      <input
-                        type="number"
-                        value={budget}
-                        onChange={(e) => setBudget(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-600 rounded bg-gray-800 text-white"
-                      />
-                    </div>
-                    <div className="flex justify-between">
-                      <button
-                        onClick={prevStep}
-                        className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-                      >
-                        Previous
-                      </button>
-                      <button
-                        onClick={async () => {
-                          const payload = {
-                            userType,
-                            merchantStoreLink,
-                            budget,
-                          };
-                          await updateUserDetails(payload);
-                          handleSubmit();
-                        }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                      >
-                        Submit
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-
-
-{userType === 'agentCreator' && (
-  <>
-    {currentStep === 3 && (
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Deploy your first agent</h2>
-        <div className="flex flex-col space-y-4">
-          {/* Dalle3Banner agent selection */}
-          <button
-            onClick={async () => {
-              const selectedAgentType = 'dalle3Banner';
-              setAgentType(selectedAgentType);
-              await updateUserDetails({
-                userType,
-                agentType: selectedAgentType,
-                userOnboardingCompleted: true, // Set onboarding completed
-              });
-              handleSubmit();
-            }}
-            className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-          >
-            Dalle3Banner agent
-          </button>
-          {/* SamsarOne agent selection */}
-          <button
-            onClick={async () => {
-              const selectedAgentType = 'samsarOne';
-              setAgentType(selectedAgentType);
-              await updateUserDetails({
-                userType,
-                agentType: selectedAgentType,
-                userOnboardingCompleted: true, // Set onboarding completed
-              });
-              handleSubmit();
-            }}
-            className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-          >
-            SamsarOne agent
-          </button>
-          {/* Custom agent option */}
-          <button
-            onClick={() => {
-              const selectedAgentType = 'customAgent';
-              setAgentType(selectedAgentType);
-              nextStep();
-            }}
-            className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-          >
-            Custom agent
-          </button>
-        </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
-    )}
-
-    {currentStep === 4 && agentType === 'customAgent' && (
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Configure your Custom Agent</h2>
-        <div className="space-y-4">
-          {/* ...input fields... */}
-          <div className="flex justify-between">
-            <button
-              onClick={prevStep}
-              className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-            >
-              Previous
-            </button>
-            <button
-              onClick={async () => {
-                const payload = {
-                  userType,
-                  agentType,
-                  apiUrl,
-                  inputSchema,
-                  outputSchema,
-                  userOnboardingCompleted: true, // Set onboarding completed
-                };
-                await updateUserDetails(payload);
-                handleSubmit();
-              }}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Submit
-            </button>
-          </div>
-        </div>
-      </div>
-    )}
-  </>
-)}
-
-
-
-{/* Merchant Flow */}
-{userType === 'merchant' && (
-  <>
-    {currentStep === 3 && (
-      <AddStore
-        nextStep={nextStep}
-        prevStep={prevStep}
-        setMerchantStoreLink={setMerchantStoreLink}
-      />
-    )}
-
-    {currentStep === 4 && (
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Add Budget</h2>
-        <div className="space-y-4">
-          {/* Budget Input */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Budget</label>
-            <input
-              type="number"
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-600 rounded bg-gray-800 text-white"
-            />
-          </div>
-          {/* Navigation Buttons */}
-          <div className="flex justify-between">
-            <button
-              onClick={prevStep}
-              className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-            >
-              Previous
-            </button>
-            <button
-              onClick={async () => {
-                const payload = {
-                  userType,
-                  merchantStoreLink,
-                  budget,
-                  userOnboardingCompleted: true, // Set onboarding completed
-                };
-                await updateUserDetails(payload);
-                handleSubmit();
-              }}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Submit
-            </button>
-          </div>
-        </div>
-      </div>
-    )}
-  </>
-)}
-
-
-        </div>
-      </div>
-      <BottomNav />
     </div>
+    <BottomNav />
+  </div>
+  
   );
 }

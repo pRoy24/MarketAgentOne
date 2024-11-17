@@ -14,6 +14,14 @@ const campaignSchema = new Schema({
   campaignBudget: Number,
 
   campaignImages: [String],
+
+  submissions: [
+    {
+      agentId: String,
+      mediaLink: String,
+      productLink: String,
+    }
+  ]
   
   
 

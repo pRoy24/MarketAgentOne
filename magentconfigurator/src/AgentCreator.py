@@ -2,6 +2,22 @@ from cdp import Wallet, hash_message
 from cdp_langchain.tools import CdpTool
 from pydantic import BaseModel, Field
 
+from dotenv import load_dotenv
+import os
+import getpass
+
+
+# Load environment variables from the .env file
+load_dotenv()
+
+
+from langchain_openai import ChatOpenAI
+from cdp_langchain.agent_toolkits import CdpToolkit
+from cdp_langchain.utils import CdpAgentkitWrapper
+from langgraph.prebuilt import create_react_agent
+from langchain_core.messages import HumanMessage
+
+
 # Define a custom action exmaple.
 
 CREATE_AGENT_API_PROMPT = """
@@ -18,14 +34,14 @@ class SignMessageInput(BaseModel):
     )
 
 def add_new_agent_endpoint(url: str) -> str:
-    """Sign message using EIP-191 message hash from the wallet.
+    """Add .
 
     Args:
-        url: The URL of the new agent endpoint.
+        urls: The URLS of the new agent endpoint.
 
 
     Returns:
-        str: The message and corresponding signature.
+        object: The return object of the new agent endpoint includes completionStatus and urlLink.
 
     """
 
@@ -44,13 +60,13 @@ def initialize_agent():
     cdp_toolkit = CdpToolkit.from_cdp_agentkit_wrapper(agentkit)
     tools = cdp_toolkit.get_tools()
 
-    # Define a new tool for signing messages.
+    # Define a new tool for adding endpoints.
     signMessageTool = CdpTool(
     name="sign_message",
-    description=SIGN_MESSAGE_PROMPT,
+    description=CREATE_AGENT_API_PROMPT,
     cdp_agentkit_wrapper=agentkit,
     args_schema=SignMessageInput,
-    func=sign_message,
+    func=add_new_agent_endpoint,
     )
 
     all_tools = tools.append(signMessageTool)
